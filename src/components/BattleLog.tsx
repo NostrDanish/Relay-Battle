@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { BattleLogEntry } from '@/lib/battleEngine';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface BattleLogProps {
   entries: BattleLogEntry[];
@@ -10,27 +9,33 @@ interface BattleLogProps {
 }
 
 export function BattleLog({ entries, currentIndex, className }: BattleLogProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = scrollRef.current;
+    if (!container) return;
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
   }, [currentIndex]);
 
   const visibleEntries = entries.slice(0, currentIndex + 1);
 
   return (
     <div className={cn('rounded-xl border bg-card/60 backdrop-blur-sm overflow-hidden', className)}>
-      <div className="px-4 py-3 border-b bg-muted/30">
+      <div className="px-4 py-3 border-b bg-muted/30 flex items-center justify-between">
         <h3 className="font-pixel text-xs text-arena-gold">BATTLE LOG</h3>
+        <span className="text-[10px] text-muted-foreground font-mono">
+          {visibleEntries.length}/{entries.length} entries
+        </span>
       </div>
-      <ScrollArea className="h-[300px] md:h-[400px]">
-        <div className="p-3 space-y-1 battle-log-scroll">
-          {visibleEntries.map((entry, i) => (
-            <LogEntry key={i} entry={entry} isNew={i === currentIndex} />
-          ))}
-          <div ref={bottomRef} />
-        </div>
-      </ScrollArea>
+      <div
+        ref={scrollRef}
+        className="h-[300px] md:h-[400px] overflow-y-auto p-3 space-y-1 battle-log-scroll"
+      >
+        {visibleEntries.map((entry, i) => (
+          <LogEntry key={i} entry={entry} isNew={i === currentIndex} />
+        ))}
+      </div>
     </div>
   );
 }

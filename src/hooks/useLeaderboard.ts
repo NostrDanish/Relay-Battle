@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import type { BattleResult } from '@/lib/battleEngine';
 import type { LeaderboardEntry } from '@/components/Leaderboard';
 import { useLocalStorage } from '@/hooks/useLocalStorage';

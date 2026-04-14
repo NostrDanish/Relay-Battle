@@ -67,35 +67,39 @@ export function TournamentBracket({ relays, onBattleComplete, onWatchBattle }: T
   }, [relays, size]);
 
   const runTournament = useCallback(async () => {
+    if (matches.length === 0) return;
     setIsRunning(true);
-    let currentMatches = [...matches];
+    
+    // Work with a mutable copy of all matches
+    const allMatches: TournamentMatch[] = matches.map(m => ({ ...m }));
     let round = 0;
     
     // Process all rounds
     while (true) {
-      const roundMatches = currentMatches.filter(m => m.round === round);
+      const roundMatches = allMatches.filter(m => m.round === round);
+      if (roundMatches.length === 0) break;
       
       // Simulate each match in the round
-      for (let i = 0; i < roundMatches.length; i++) {
-        const match = roundMatches[i];
+      for (const match of roundMatches) {
         if (match.winner) continue; // Bye
         if (!match.fighterA || !match.fighterB) continue;
         
-        setCurrentMatch(currentMatches.indexOf(match));
+        setCurrentMatch(allMatches.indexOf(match));
         
         // Wait a bit for drama
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 400));
         
-        const result = simulateBattle(match.fighterA, match.fighterB);
-        const winner = result.winner === match.fighterA.url ? match.fighterA : match.fighterB;
+        const battleResult = simulateBattle(match.fighterA, match.fighterB);
+        const winner = battleResult.winner === match.fighterA.url ? match.fighterA : match.fighterB;
         
         match.winner = winner;
-        match.result = result;
-        onBattleComplete?.(result);
+        match.result = battleResult;
+        onBattleComplete?.(battleResult);
         
-        setMatches([...currentMatches]);
+        // Update state with fresh array
+        setMatches([...allMatches]);
         
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 300));
       }
       
       // Get winners from this round
@@ -109,8 +113,8 @@ export function TournamentBracket({ relays, onBattleComplete, onWatchBattle }: T
       
       // Create next round matches
       round++;
-      for (let i = 0; i < winners.length / 2; i++) {
-        currentMatches.push({
+      for (let i = 0; i < Math.floor(winners.length / 2); i++) {
+        allMatches.push({
           round,
           matchIndex: i,
           fighterA: winners[i * 2] || null,
@@ -120,7 +124,19 @@ export function TournamentBracket({ relays, onBattleComplete, onWatchBattle }: T
         });
       }
       
-      setMatches([...currentMatches]);
+      // Handle odd number of winners — last one gets a bye
+      if (winners.length % 2 === 1) {
+        allMatches.push({
+          round,
+          matchIndex: Math.floor(winners.length / 2),
+          fighterA: winners[winners.length - 1],
+          fighterB: null,
+          winner: winners[winners.length - 1],
+          result: null,
+        });
+      }
+      
+      setMatches([...allMatches]);
     }
     
     setIsRunning(false);

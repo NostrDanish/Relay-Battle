@@ -2,23 +2,23 @@
 
 ## Battle Result Events (kind 3633)
 
-Regular event used to publish battle results and tick-by-tick battle logs.
+Regular event used to publish battle results and summaries.
 
 ### Event Structure
 
 ```json
 {
   "kind": 3633,
-  "content": "<JSON stringified battle log>",
+  "content": "<JSON stringified battle summary>",
   "tags": [
-    ["d", "<battle-id>"],
-    ["alt", "Relay Arena battle result: <relay-a> vs <relay-b>"],
+    ["alt", "Relay Arena battle result: <relay-a> vs <relay-b> — Winner: <winner>"],
     ["t", "relay-arena"],
     ["t", "battle"],
+    ["t", "relay-battle"],
     ["r", "<relay-a-url>"],
     ["r", "<relay-b-url>"],
     ["winner", "<winning-relay-url>"],
-    ["format", "1v1|koth|tournament|ffa"],
+    ["format", "quickduel|koth|tournament|ffa"],
     ["ticks", "<total-ticks>"]
   ]
 }

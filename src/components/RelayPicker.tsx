@@ -60,7 +60,7 @@ export function RelayPicker({
           relay={selectedA}
           isSelecting={selectingFor === 'a'}
           onClick={() => setSelectingFor('a')}
-          color="arena-red"
+          side="a"
         />
         <div className="hidden md:flex items-center justify-center">
           <span className="font-pixel text-sm text-muted-foreground">VS</span>
@@ -70,7 +70,7 @@ export function RelayPicker({
           relay={selectedB}
           isSelecting={selectingFor === 'b'}
           onClick={() => setSelectingFor('b')}
-          color="arena-blue"
+          side="b"
         />
       </div>
 
@@ -189,13 +189,13 @@ function SelectionSlot({
   relay,
   isSelecting,
   onClick,
-  color,
+  side,
 }: {
   label: string;
   relay: RelayStats | null;
   isSelecting: boolean;
   onClick: () => void;
-  color: string;
+  side: 'a' | 'b';
 }) {
   const portrait = relay ? generatePortrait(relay.url) : null;
 
@@ -204,7 +204,9 @@ function SelectionSlot({
       onClick={onClick}
       className={cn(
         'flex items-center gap-3 p-3 rounded-xl border-2 border-dashed transition-all text-left w-full',
-        isSelecting ? `border-${color}/60 bg-${color}/5` : 'border-muted-foreground/20 hover:border-muted-foreground/40',
+        isSelecting && side === 'a' && 'border-arena-red/60 bg-arena-red/5',
+        isSelecting && side === 'b' && 'border-arena-blue/60 bg-arena-blue/5',
+        !isSelecting && 'border-muted-foreground/20 hover:border-muted-foreground/40',
         relay && 'border-solid',
       )}
       style={relay ? { borderColor: portrait?.primaryColor + '80' } : undefined}

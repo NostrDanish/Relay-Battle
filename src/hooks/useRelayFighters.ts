@@ -13,7 +13,10 @@ async function fetchNIP11(relayUrl: string): Promise<RelayStats> {
     });
 
     if (!res.ok) throw new Error('NIP-11 fetch failed');
-    const info = await res.json();
+    const text = await res.text();
+    // Guard against non-JSON responses (HTML error pages, etc.)
+    if (!text.startsWith('{')) throw new Error('Non-JSON response');
+    const info = JSON.parse(text);
 
     const nips = info?.supported_nips ?? [];
     const hasAuth = info?.limitation?.auth_required ?? false;

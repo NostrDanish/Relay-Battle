@@ -709,10 +709,11 @@ export function simulateBattle(
     winner = relayB.url;
   }
 
-  const winnerName = winner === relayA.url ? relayA.name : winner === relayB.url ? relayB.name : 'Nobody';
-  log.push(createLogEntry(tick, winner === relayA.url ? fighterA : fighterB, 'effect',
-    winner ? `🏆 ${winnerName} WINS after ${tick} ticks!` : `Draw after ${tick} ticks!`,
-    '🏆', getHpSnapshot(allFighters)));
+  const winnerFighter = winner === relayA.url ? fighterA : winner === relayB.url ? fighterB : fighterA;
+  const winnerName = winner === relayA.url ? relayA.name : winner === relayB.url ? relayB.name : null;
+  log.push(createLogEntry(tick, winnerFighter, 'effect',
+    winnerName ? `🏆 ${winnerName} WINS after ${tick} ticks!` : `⚔️ DRAW after ${tick} ticks! Both relays still standing!`,
+    winnerName ? '🏆' : '🤝', getHpSnapshot(allFighters)));
 
   return {
     battleId,

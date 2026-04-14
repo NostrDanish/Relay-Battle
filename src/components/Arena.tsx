@@ -35,8 +35,17 @@ export function Arena({ fighterA, fighterB, onBattleComplete }: ArenaProps) {
   const [countdown, setCountdown] = useState(3);
   const [activeHit, setActiveHit] = useState<'a' | 'b' | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const odds = fighterA && fighterB ? calculateOdds(fighterA, fighterB) : null;
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, []);
 
   const clearInterval_ = useCallback(() => {
     if (intervalRef.current) {
@@ -59,13 +68,17 @@ export function Arena({ fighterA, fighterB, onBattleComplete }: ArenaProps) {
     setIsPaused(false);
     setActiveHit(null);
 
+    // Clean up any existing countdown
+    if (countdownRef.current) clearInterval(countdownRef.current);
+
     // Countdown
     let count = 3;
-    const countInterval = setInterval(() => {
+    countdownRef.current = setInterval(() => {
       count--;
       setCountdown(count);
       if (count <= 0) {
-        clearInterval(countInterval);
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        countdownRef.current = null;
         // Run simulation
         const battleResult = simulateBattle(fighterA, fighterB);
         setResult(battleResult);
@@ -310,23 +323,28 @@ export function Arena({ fighterA, fighterB, onBattleComplete }: ArenaProps) {
       </div>
 
       {/* Betting + Battle Log */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
-        {/* Battle Log */}
-        {result && result.log.length > 0 && (
-          <BattleLog
-            entries={result.log}
-            currentIndex={currentLogIndex}
-          />
-        )}
+      {(result || battleState === 'idle') && (
+        <div className={cn(
+          'grid gap-4 md:gap-6',
+          result && result.log.length > 0 ? 'grid-cols-1 lg:grid-cols-[1fr_320px]' : 'grid-cols-1 max-w-sm mx-auto lg:max-w-none lg:grid-cols-1',
+        )}>
+          {/* Battle Log */}
+          {result && result.log.length > 0 && (
+            <BattleLog
+              entries={result.log}
+              currentIndex={currentLogIndex}
+            />
+          )}
 
-        {/* Betting Panel */}
-        <BettingPanel
-          fighterA={fighterA}
-          fighterB={fighterB}
-          battleId={result?.battleId}
-          isBattleActive={battleState === 'fighting' || battleState === 'countdown'}
-        />
-      </div>
+          {/* Betting Panel */}
+          <BettingPanel
+            fighterA={fighterA}
+            fighterB={fighterB}
+            battleId={result?.battleId}
+            isBattleActive={battleState === 'fighting' || battleState === 'countdown'}
+          />
+        </div>
+      )}
     </div>
   );
 }

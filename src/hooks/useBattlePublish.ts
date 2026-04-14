@@ -24,11 +24,11 @@ export function useBattlePublish() {
       ? result.fighters.find(f => f.url !== result.winner)?.name || 'Unknown'
       : 'Draw';
 
-    const tags = [
-      ['d', result.battleId],
+    const tags: string[][] = [
       ['alt', `Relay Arena battle result: ${fighterA?.name} vs ${fighterB?.name} — Winner: ${winnerName}`],
       ['t', 'relay-arena'],
       ['t', 'battle'],
+      ['t', 'relay-battle'],
     ];
 
     if (fighterA) tags.push(['r', fighterA.url]);
