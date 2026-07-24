@@ -297,7 +297,52 @@ export async function fetchAllRelayStats(urls: string[] = POPULAR_RELAYS): Promi
 
 // --- Utility to fetch from nostr.watch and enhance with NIP-11 ---
 
+export async function fetchRelaysFrom0xFinder(): Promise<string[]> {
+  const tryEndpoints = [
+    'https://0xrelay-finder.shakespeare.wtf/api/relays',
+    'https://0xrelay-finder.shakespeare.wtf/relays',
+    'https://0xrelay-finder.shakespeare.wtf/relays.json',
+    'https://0xrelay-finder.shakespeare.wtf/',
+  ];
+
+  for (const ep of tryEndpoints) {
+    try {
+      const res = await fetch(ep, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) continue;
+      const text = await res.text();
+      // Try parse JSON
+      try {
+        const json = JSON.parse(text);
+        // If it's an array of strings
+        if (Array.isArray(json) && json.every((s: any) => typeof s === 'string')) {
+          return json as string[];
+        }
+        // If it's an object with relays key
+        if (json && Array.isArray(json.relays)) {
+          return json.relays.map((r: any) => (typeof r === 'string' ? r : r.url)).filter(Boolean);
+        }
+      } catch {
+        // Not JSON - try to scrape for wss:// links
+        const matches = Array.from(text.matchAll(/wss:\/\/[\w\-\.\/:%@\?=&#\+]+/g)).map(m => m[0]);
+        if (matches.length > 0) return Array.from(new Set(matches));
+      }
+    } catch {
+      // continue
+    }
+  }
+
+  return [];
+}
+
 export async function discoverRelays(): Promise<string[]> {
+  // Prefer relays from 0xRelay-Finder when available
+  try {
+    const finder = await fetchRelaysFrom0xFinder();
+    if (finder && finder.length > 0) return finder;
+  } catch {
+    // ignore
+  }
+
   try {
     const relays = await fetchNostrWatchData();
     if (relays.length > 0) {

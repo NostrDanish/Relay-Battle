@@ -13,6 +13,8 @@ Relay Arena turns the Nostr relay network into a fighting game. Every relay is a
 
 It's part [nostr.watch](https://nostr.watch) live dashboard, part Street Fighter, part betting market. Built entirely on Nostr — no central server, all results are signed events on the network.
 
+Fighters are sourced live from **[0xRelay-Finder](https://0xrelay-finder.shakespeare.wtf/)** ([source](https://github.com/NostrDanish/0xNostr-Relay-Finder)) — every relay submitted to the Finder becomes eligible to enter the arena.
+
 **Live at:** https://relay-arena.shakespeare.wtf
 
 ---
@@ -58,6 +60,12 @@ NIP bonuses for: NIP-42, NIP-47, NIP-57, NIP-59, NIP-60, NIP-29, NIP-50, NIP-37
 - Pre-battle odds calculated from fighter stats
 - Bet placement UI (NIP-57 Zap settlement — UI ready, full flow coming)
 - No house edge, no central server
+
+### Themes
+- **Light** — clean daylight arena
+- **Dark** — default moody battle atmosphere
+- **Hacker** 🤓 — neon-green-on-black terminal aesthetic with CRT-style glow
+- Switch anytime via the theme toggle in the header; preference is saved locally
 
 ### Nostr Integration
 - **Login** via NIP-07 browser extension, NIP-46 bunker, or nsec
@@ -150,13 +158,15 @@ Published events are tagged with `t: relay-arena` for discoverability.
 
 ## Data Sources
 
-Relay stats are pulled from:
+Relay stats are pulled from, in order of priority:
 
-1. **NIP-11 Relay Information Document** — fetched live via CORS proxy from each relay's HTTP endpoint. Provides: name, supported NIPs, auth/PoW/payment requirements, write restrictions, icon.
+1. **[0xRelay-Finder](https://0xrelay-finder.shakespeare.wtf/)** — the primary roster source. Every relay submitted to the Finder is fetched live and becomes available as a fighter. See the [Finder's source](https://github.com/NostrDanish/0xNostr-Relay-Finder) for how relays get submitted.
 
-2. **Deterministic fallback** — when NIP-11 is unavailable, stats are generated deterministically from the URL hash. Same URL always produces the same fighter, so battles are reproducible.
+2. **NIP-11 Relay Information Document** — fetched live via CORS proxy from each relay's HTTP endpoint. Provides: name, supported NIPs, auth/PoW/payment requirements, write restrictions, icon.
 
-The 16 featured relays are:
+3. **nostr.watch API** — used as a secondary discovery source if the Finder is unreachable.
+
+4. **Deterministic fallback roster** — if all live sources fail, a curated list of 16 well-known relays is used, with stats generated deterministically from the URL hash so battles stay reproducible:
 
 ```
 wss://relay.damus.io        wss://relay.primal.net

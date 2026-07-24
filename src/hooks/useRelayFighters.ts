@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { POPULAR_RELAYS, generateDemoStats } from '@/lib/relayStats';
+import { POPULAR_RELAYS, generateDemoStats, discoverRelays } from '@/lib/relayStats';
 import type { RelayStats } from '@/lib/battleEngine';
 
 async function fetchNIP11(relayUrl: string): Promise<RelayStats> {
@@ -44,18 +44,21 @@ async function fetchNIP11(relayUrl: string): Promise<RelayStats> {
   }
 }
 
-export function useRelayFighters(relayUrls: string[] = POPULAR_RELAYS) {
+export function useRelayFighters() {
   return useQuery<RelayStats[]>({
-    queryKey: ['relay-fighters', relayUrls.join(',')],
+    queryKey: ['relay-fighters', '0x-finder'],
     queryFn: async () => {
-      // Fetch NIP-11 for all relays in parallel, falling back to demo stats
+      // Try 0xRelay-Finder first, fall back to the static roster
+      const urls = await discoverRelays();
+      const finalUrls = urls.length > 0 ? urls : POPULAR_RELAYS;
+
       const results = await Promise.allSettled(
-        relayUrls.map((url) => fetchNIP11(url))
+        finalUrls.map((url) => fetchNIP11(url))
       );
 
       return results.map((result, i) => {
         if (result.status === 'fulfilled') return result.value;
-        return generateDemoStats(relayUrls[i]);
+        return generateDemoStats(finalUrls[i]);
       });
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

@@ -52,6 +52,46 @@
     --arena-cyan: 185 85% 50%;
   }
 
+  /* Light theme overrides */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 15% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 10%;
+
+    --primary: 340 85% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 60% 45%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 45 95% 50%;
+    --accent-foreground: 220 15% 10%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    --ring: 340 85% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 15% 10%;
+    --sidebar-primary: 340 85% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 92%;
+    --sidebar-accent-foreground: 220 15% 10%;
+    --sidebar-border: 220 15% 85%;
+    --sidebar-ring: 340 85% 50%;
+  }
+
   .dark {
     --background: 230 25% 6%;
     --foreground: 220 20% 92%;
@@ -80,6 +120,7 @@
     --border: 230 15% 18%;
     --input: 230 15% 18%;
     --ring: 340 85% 55%;
+
     --sidebar-background: 230 22% 9%;
     --sidebar-foreground: 220 20% 92%;
     --sidebar-primary: 340 85% 55%;
@@ -88,6 +129,62 @@
     --sidebar-accent-foreground: 220 20% 92%;
     --sidebar-border: 230 15% 18%;
     --sidebar-ring: 340 85% 55%;
+  }
+
+  /* Hacker theme: neon green-on-black terminal vibe */
+  .hacker {
+    --background: 140 100% 3%;
+    --foreground: 120 100% 75%;
+
+    --card: 140 90% 5%;
+    --card-foreground: 120 100% 80%;
+
+    --popover: 140 90% 5%;
+    --popover-foreground: 120 100% 80%;
+
+    --primary: 120 100% 50%;
+    --primary-foreground: 140 100% 5%;
+
+    --secondary: 120 60% 12%;
+    --secondary-foreground: 120 100% 80%;
+
+    --muted: 120 50% 8%;
+    --muted-foreground: 120 40% 45%;
+
+    --accent: 120 100% 55%;
+    --accent-foreground: 140 100% 5%;
+
+    --destructive: 0 80% 45%;
+    --destructive-foreground: 120 100% 90%;
+
+    --border: 120 70% 18%;
+    --input: 120 70% 14%;
+    --ring: 120 100% 50%;
+
+    --sidebar-background: 140 90% 4%;
+    --sidebar-foreground: 120 100% 75%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 140 100% 5%;
+    --sidebar-accent: 120 60% 10%;
+    --sidebar-accent-foreground: 120 100% 80%;
+    --sidebar-border: 120 70% 16%;
+    --sidebar-ring: 120 100% 50%;
+
+    --arena-red: 0 90% 50%;
+    --arena-blue: 210 90% 55%;
+    --arena-gold: 60 100% 50%;
+    --arena-purple: 290 80% 55%;
+    --arena-green: 120 100% 55%;
+    --arena-cyan: 170 100% 50%;
+  }
+
+  /* Hacker global tweaks */
+  .hacker body {
+    text-shadow: 0 0 1px hsl(var(--foreground) / 0.3);
+  }
+
+  .hacker .font-pixel {
+    text-shadow: 0 0 6px hsl(var(--foreground) / 0.6);
   }
 }
 

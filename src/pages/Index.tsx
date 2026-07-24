@@ -4,6 +4,7 @@ import { Swords, Trophy, Scroll, Zap, Crown } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { LoginArea } from '@/components/auth/LoginArea';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Arena } from '@/components/Arena';
 import { RelayPicker } from '@/components/RelayPicker';
 import { Leaderboard } from '@/components/Leaderboard';
@@ -65,7 +66,10 @@ const Index = () => {
                 <p className="text-[10px] md:text-xs text-muted-foreground">Nostr Relay Gladiators</p>
               </div>
             </div>
-            <LoginArea className="max-w-48" />
+            <div className="flex items-center gap-3">
+              <ThemeSwitcher />
+              <LoginArea className="max-w-48" />
+            </div>
           </div>
 
           <div className="text-center max-w-2xl mx-auto">
@@ -236,8 +240,15 @@ const Index = () => {
               <span className="font-pixel text-[10px]">RELAY ARENA</span>
               <span>— Nostr relays fighting with real stats</span>
             </div>
-            <div className="flex items-center gap-4">
-              <span>Relay data from NIP-66 & NIP-11</span>
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <a
+                href="https://0xrelay-finder.shakespeare.wtf/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Fighters sourced from 0xRelay-Finder
+              </a>
               <span>|</span>
               <span>All battles are verifiable Nostr events</span>
               <span>|</span>
